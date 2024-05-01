@@ -28,9 +28,7 @@ class MainProductSerializer(serializers.ModelSerializer):
 
     def get_colorphoto_image(self, obj):
         color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
-        request = self.context.get('request')
-        base_url = request.build_absolute_uri('/')[:-1]  # Remove trailing slash
-        return [base_url + color_photo.colorphoto_image.url for color_photo in color_photos]
+        return [color_photo.colorphoto_image.url for color_photo in color_photos]
 
     def get_colorphoto_name(self, obj):
         color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
@@ -39,13 +37,8 @@ class MainProductSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         colors_data = representation.get('colors', [])
-        request = self.context.get('request')
         for color_data in colors_data:
-            color_instance = Color.objects.filter(color_name=color_data['color_name']).first()
-            if color_instance:
-                color_data['color_image'] = request.build_absolute_uri(color_instance.color_image.url)
-            else:
-                color_data.pop('color_image', None)  # Remove 'color_image' key if color_instance is None
+            color_data['color_image'] = color_data['color_image'].replace('http://localhost:8000', '')
         return representation
 
 
