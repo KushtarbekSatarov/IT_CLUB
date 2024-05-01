@@ -9,24 +9,29 @@ class ColorPhotoSerializer(serializers.ModelSerializer):
         model = ColorPhoto
         fields = ['colorphoto_name', 'colorphoto_image']
 class ColorSerializer(serializers.ModelSerializer):
-    # color_photo = ColorPhotoSerializer(required=False, allow_null=True)
+    color_photo = ColorPhotoSerializer(required=False, allow_null=True)
 
     class Meta:
         model = Color
-        fields = ['color_name', 'color_image']
-        ref_name = 'Color'  # Set a distinct ref_name
+        fields = ['color_name', 'color_image', 'color_photo']
+
+
+
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ['brand_name', 'brand_image']
 
 
 class MainProductSerializer(serializers.ModelSerializer):
     colors = ColorSerializer(many=True)
     colorphoto_image = serializers.SerializerMethodField()
     colorphoto_name = serializers.SerializerMethodField()
-    brand_name = serializers.SerializerMethodField()
-    brand_image = serializers.SerializerMethodField()
+    brand = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['product_name', 'colorphoto_image', 'colorphoto_name', 'description', 'colors', 'price', 'stars', 'activate', 'brand_name', 'brand_image']
+        fields = ['product_name', 'colorphoto_image', 'colorphoto_name', 'description', 'colors', 'price', 'stars', 'activate', 'brand']
 
     def get_colorphoto_image(self, obj):
         color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
@@ -36,24 +41,20 @@ class MainProductSerializer(serializers.ModelSerializer):
         color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
         return [color_photo.colorphoto_name.color_name for color_photo in color_photos]
 
-    def get_brand_name(self, obj):
-        return obj.brand.brand_name
-
-    def get_brand_image(self, obj):
-        return obj.brand.brand_image.url.replace('http://localhost:8000', '')
+    def get_brand(self, obj):
+        return {
+            'brand_name': obj.brand.brand_name,
+            'brand_image': obj.brand.brand_image.url.replace('http://localhost:8000', '')
+        }
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         colors_data = representation.get('colors', [])
         for color_data in colors_data:
             color_data['color_image'] = color_data['color_image'].replace('http://localhost:8000', '')
+            if color_data['color_photo'] is None:
+                del color_data['color_photo']
         return representation
-
-
-class BrandSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Brand
-        fields = '__all__'
 
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -81,6 +82,8 @@ class ReviewsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProductSerializer(serializers.ModelSerializer):
+
+
     class Meta:
         model = Product
         fields = '__all__'
@@ -119,3 +122,4 @@ class About_usSerializer(serializers.ModelSerializer):
     class Meta:
         model = About_us
         fields = '__all__'
+
