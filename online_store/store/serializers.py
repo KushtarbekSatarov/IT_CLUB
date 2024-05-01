@@ -2,10 +2,12 @@ from rest_framework import serializers
 from .models import Product, Color, ColorPhoto, Brand, Volume, Model, Photo, Reviews, Characteristic, Carusel_Photo, Favorite, Basket, Order, News, About_us
 
 class ColorPhotoSerializer(serializers.ModelSerializer):
+    color_name = serializers.CharField(source='colorphoto_name.color_name', read_only=True)
+    color_image = serializers.ImageField(source='colorphoto_image', read_only=True)
+
     class Meta:
         model = ColorPhoto
-        fields = ['colorphoto_image', 'colorphoto_name']
-
+        fields = ['colorphoto_name', 'colorphoto_image']
 class ColorSerializer(serializers.ModelSerializer):
     # color_photo = ColorPhotoSerializer(required=False, allow_null=True)
 
@@ -16,17 +18,23 @@ class ColorSerializer(serializers.ModelSerializer):
 
 
 class MainProductSerializer(serializers.ModelSerializer):
-    photos = serializers.SerializerMethodField()
     colors = ColorSerializer(many=True)
+    colorphoto_image = serializers.SerializerMethodField()
+    colorphoto_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
-        fields = ['product_name', 'photos', 'description', 'colors', 'price', 'stars', 'activate', 'brand_id']
+        fields = ['product_name', 'colorphoto_image', 'colorphoto_name', 'description', 'colors', 'price', 'stars', 'activate', 'brand_id']
 
-    def get_photos(self, obj):
+    def get_colorphoto_image(self, obj):
+        color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
         request = self.context.get('request')
-        photos = obj.photos.all()
-        return [request.build_absolute_uri(photo.image.url) for photo in photos]
+        base_url = request.build_absolute_uri('/')[:-1]  # Remove trailing slash
+        return [base_url + color_photo.colorphoto_image.url for color_photo in color_photos]
+
+    def get_colorphoto_name(self, obj):
+        color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
+        return [color_photo.colorphoto_name.color_name for color_photo in color_photos]
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

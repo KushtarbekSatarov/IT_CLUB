@@ -95,6 +95,7 @@ class Product(models.Model):
     model = models.ForeignKey(Model, on_delete=models.CASCADE, related_name='product_model')
     description = models.TextField(blank=True, null=True)
     colors = models.ManyToManyField(Color, related_name='product_color', blank=True)
+    colorphoto = models.ManyToManyField(ColorPhoto, related_name='product_colorphoto', blank=True)
     price = models.DecimalField(max_digits=15, decimal_places=2)
     photos = models.ManyToManyField(Photo, related_name='product_photo', blank=True)
     date = models.DateField(auto_now=True, blank=True, null=True)
