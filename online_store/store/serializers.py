@@ -8,6 +8,7 @@ class ColorPhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ColorPhoto
         fields = ['colorphoto_name', 'colorphoto_image']
+
 class ColorSerializer(serializers.ModelSerializer):
     color_photo = ColorPhotoSerializer(required=False, allow_null=True)
 
@@ -15,6 +16,11 @@ class ColorSerializer(serializers.ModelSerializer):
         model = Color
         fields = ['color_name', 'color_image', 'color_photo']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        if representation['color_photo'] is None:
+            del representation['color_photo']
+        return representation
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -52,9 +58,10 @@ class MainProductSerializer(serializers.ModelSerializer):
         colors_data = representation.get('colors', [])
         for color_data in colors_data:
             color_data['color_image'] = color_data['color_image'].replace('http://localhost:8000', '')
-            if color_data['color_photo'] is None:
+            if 'color_photo' in color_data and color_data['color_photo'] is None:
                 del color_data['color_photo']
         return representation
+
 
 class VolumeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -62,9 +69,12 @@ class VolumeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ModelSerializer(serializers.ModelSerializer):
+    brand = BrandSerializer()
+
     class Meta:
         model = Model
-        fields = '__all__'
+        fields = ['id', 'model_name', 'brand']
+
 
 class ProductColorSerializer(serializers.ModelSerializer):
     class Meta:
