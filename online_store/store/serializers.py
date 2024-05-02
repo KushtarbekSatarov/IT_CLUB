@@ -7,7 +7,7 @@ class ColorPhotoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ColorPhoto
-        fields = ['colorphoto_name', 'colorphoto_image']
+        fields = ['colorphoto_name', 'colorphoto_image', 'color_name', 'color_image']
 
 class ColorSerializer(serializers.ModelSerializer):
     color_photo = ColorPhotoSerializer(required=False, allow_null=True)
@@ -37,7 +37,7 @@ class MainProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['product_name', 'colorphoto_image', 'colorphoto_name', 'description', 'colors', 'price', 'stars', 'activate', 'brand']
+        fields = ['id', 'product_name', 'colorphoto_image', 'colorphoto_name', 'description', 'colors', 'price', 'stars', 'activate', 'brand']
 
     def get_colorphoto_image(self, obj):
         color_photos = ColorPhoto.objects.filter(colorphoto_name__in=obj.colors.all())
@@ -63,17 +63,33 @@ class MainProductSerializer(serializers.ModelSerializer):
         return representation
 
 
-class VolumeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Volume
-        fields = '__all__'
-
 class ModelSerializer(serializers.ModelSerializer):
     brand = BrandSerializer()
 
     class Meta:
         model = Model
         fields = ['id', 'model_name', 'brand']
+
+
+class VolumeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Volume
+        fields = ['id', 'value']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    brand = BrandSerializer()
+    model = ModelSerializer()
+    memory = VolumeSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'product_name', 'brand', 'model', 'description', 'price', 'date', 'memory', 'stars', 'activate']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['brand']['brand_image'] = representation['brand']['brand_image'].replace('http://localhost:8000', '')
+        return representation
 
 
 class ProductColorSerializer(serializers.ModelSerializer):
@@ -91,17 +107,11 @@ class ReviewsSerializer(serializers.ModelSerializer):
         model = Reviews
         fields = '__all__'
 
-class ProductSerializer(serializers.ModelSerializer):
-
-
-    class Meta:
-        model = Product
-        fields = '__all__'
 
 class CharacteristicSerializer(serializers.ModelSerializer):
     class Meta:
         model = Characteristic
-        fields = '__all__'
+        fields = ['id', 'product', 'key', 'value']
 
 class Carusel_PhotoSerializer(serializers.ModelSerializer):
     class Meta:
