@@ -6,8 +6,7 @@ from .models import *
 admin.site.register(Brand)
 admin.site.register(Volume)
 admin.site.register(Model)
-(admin.site.register
- (Color))
+admin.site.register(Color)
 admin.site.register(Photo)
 admin.site.register(Carusel_Photo)
 admin.site.register(Favorite)
