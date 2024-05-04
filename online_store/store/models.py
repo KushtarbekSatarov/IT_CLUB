@@ -1,6 +1,6 @@
 #models.py
 from django.db import models
-from  django.contrib.auth.models import User
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -52,18 +52,6 @@ class Color(models.Model):
         verbose_name_plural = 'Colors'
 
 
-class ColorPhoto(models.Model):
-    colorphoto_image = models.ImageField(upload_to='color_photos/img/')
-    colorphoto_name = models.OneToOneField(Color, on_delete=models.CASCADE, blank=True, null=True)
-
-    def __str__(self):
-        return self.colorphoto_name.color_name if self.colorphoto_name else ""
-
-    class Meta:
-        verbose_name = 'ColorPhoto'
-        verbose_name_plural = 'ColorsPhoto'
-
-
 class Photo(models.Model):
     image = models.ImageField(upload_to='photo/img/')
     photo_name = models.CharField(max_length=200)
@@ -74,6 +62,19 @@ class Photo(models.Model):
     class Meta:
         verbose_name = 'Photo'
         verbose_name_plural = 'Photos'
+
+
+class ColorPhoto(models.Model):
+    colorphoto_image = models.ImageField(upload_to='color_photos/img/')
+    colorphoto_name = models.OneToOneField(Color, on_delete=models.CASCADE, blank=True, null=True)
+    photos = models.ManyToManyField(Photo, related_name='photos')
+
+    def __str__(self):
+        return self.colorphoto_name.color_name if self.colorphoto_name else ""
+
+    class Meta:
+        verbose_name = 'ColorPhoto'
+        verbose_name_plural = 'ColorsPhoto'
 
 
 class Characteristic(models.Model):

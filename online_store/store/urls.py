@@ -5,7 +5,7 @@ urlpatterns = [
 
     path('accounts/', include('allauth.urls')),
     path('accounts/', include('allauth.socialaccount.urls')),
-
+    path('api-auth/', include('rest_framework.urls')),
     # path('dj-rest-auth/', include('dj_rest_auth.urls')),
     # path("dj-rest-auth/google/login/", GoogleLoginView.as_view(), name="google_login"),
     # path("~redirect/", view=UserRedirectView.as_view(), name="redirect"),

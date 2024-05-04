@@ -52,7 +52,7 @@ INSTALLED_APPS = [
     # 'allauth.socialaccount.providers.telegram',
     # 'allauth.socialaccount.providers.facebook',
     'django_filters',
-    # 'dj_rest_auth',
+    'dj_rest_auth',
     'rest_framework.authtoken',
     'corsheaders',
 ]
@@ -70,6 +70,7 @@ MIDDLEWARE = [
     "allauth.account.middleware.AccountMiddleware",
     'corsheaders.middleware.CorsMiddleware',
     "django.middleware.common.CommonMiddleware",
+
 ]
 
 ROOT_URLCONF = 'online_store.urls'
@@ -157,6 +158,8 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 
@@ -167,6 +170,8 @@ CORS_ORIGIN_ALLOW_ALL = True
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # 'allauth.socialaccount.auth_backends.SocialAccountAuthBackend',
 )
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

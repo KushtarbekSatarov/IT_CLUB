@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, Color, ColorPhoto, Brand, Volume, Model, Photo, Reviews, Characteristic, Carusel_Photo, Favorite, Basket, Order, News, About_us
+from django.contrib.auth.models import User
 
 class ColorPhotoSerializer(serializers.ModelSerializer):
     color_name = serializers.CharField(source='colorphoto_name.color_name', read_only=True)
@@ -84,8 +85,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'product_name', 'brand', 'model', 'description', 'price', 'date', 'memory', 'stars', 'activate']
-
+        # fields = ['id', 'product_name', 'brand', 'model', 'description', 'price', 'date', 'memory', 'stars', 'activate']
+        fields = '__all__'
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['brand']['brand_image'] = representation['brand']['brand_image'].replace('http://localhost:8000', '')
@@ -103,9 +104,11 @@ class PhotoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ReviewsSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    user_name = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Reviews
-        fields = '__all__'
+        fields = ['user_id', 'user_name', 'reviews', 'stars', 'data', 'product']
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):
@@ -119,14 +122,16 @@ class Carusel_PhotoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    user_id  = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Favorite
-        fields = '__all__'
+        fields = ['user_id', 'product']
 
 class BasketSerializer(serializers.ModelSerializer):
+    user_id = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Basket
-        fields = '__all__'
+        fields = ['user_id', 'product', 'product_count']
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
