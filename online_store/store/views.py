@@ -83,7 +83,7 @@ class ColorViewSets(viewsets.ModelViewSet):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 
-class ColorPhoto(viewsets.ModelViewSet):
+class ColorPhotoViewSets(viewsets.ModelViewSet):
     queryset = ColorPhoto.objects.all()
     serializer_class = ColorPhotoSerializer
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -102,8 +102,6 @@ class ProductViewSets(viewsets.ModelViewSet):
     filterset_class = ProductFilter
     search_fields = ['product_name']
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
-
 
 
 class CharacteristicViewSets(viewsets.ModelViewSet):
@@ -136,7 +134,6 @@ class OrderViewSets(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-
 
 
 class ReviewsViewSets(viewsets.ModelViewSet):

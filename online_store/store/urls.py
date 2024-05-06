@@ -66,6 +66,11 @@ urlpatterns = [
     path('color/<int:pk>/', ColorViewSets.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
          name='color_detail'),
 
+    path('colorphoto/', ColorPhotoViewSets.as_view({'get': 'list', 'post': 'create'}),
+         name='colorphoto_list'),
+    path('colorphoto/<int:pk>/', ColorPhotoViewSets.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),
+         name='colorphoto_detail'),
+
     path('reviews/', ReviewsViewSets.as_view({'get': 'list', 'post': 'create'}),
          name='reviews_list'),
     path('reviews/<int:pk>/', ReviewsViewSets.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}),

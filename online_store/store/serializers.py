@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, Color, ColorPhoto, Brand, Volume, Model, Photo, Reviews, Characteristic, Carusel_Photo, Favorite, Basket, Order, News, About_us
+from django.db.models import Avg
 from django.contrib.auth.models import User
 
 class ColorPhotoSerializer(serializers.ModelSerializer):
@@ -35,6 +36,7 @@ class MainProductSerializer(serializers.ModelSerializer):
     colorphoto_image = serializers.SerializerMethodField()
     colorphoto_name = serializers.SerializerMethodField()
     brand = serializers.SerializerMethodField()
+    stars = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -53,6 +55,10 @@ class MainProductSerializer(serializers.ModelSerializer):
             'brand_name': obj.brand.brand_name,
             'brand_image': obj.brand.brand_image.url.replace('http://localhost:8000', '')
         }
+
+    def get_stars(self, obj):
+        avg_stars = obj.product_reviews.aggregate(Avg('stars'))['stars__avg']
+        return avg_stars if avg_stars else 0
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -108,7 +114,7 @@ class ReviewsSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.username', read_only=True)
     class Meta:
         model = Reviews
-        fields = ['user_id', 'user_name', 'reviews', 'stars', 'data', 'product']
+        fields = ['user_id', 'user_name', 'text', 'stars', 'data', 'product']
 
 
 class CharacteristicSerializer(serializers.ModelSerializer):

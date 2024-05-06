@@ -101,7 +101,6 @@ class Product(models.Model):
     photos = models.ManyToManyField(Photo, related_name='product_photo', blank=True)
     date = models.DateField(auto_now=True, blank=True, null=True)
     memory = models.ManyToManyField(Volume, related_name='products', blank=True)
-    stars = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], default=1, verbose_name='Grade', blank=True, null=True)
     activate = models.BooleanField(default=False)
 
     def __str__(self):
@@ -164,7 +163,7 @@ class Order(models.Model):
 
 class Reviews(models.Model):
     user = models.ForeignKey(User, models.CASCADE)
-    reviews = models.TextField()
+    text = models.TextField(verbose_name='Reviews', null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_reviews')
     stars = models.IntegerField(choices=[(i, str(i)) for i in range(1, 6)], default=1, verbose_name='Grade')
     data = models.DateTimeField(auto_now=True, blank=True, null=True)
