@@ -91,7 +91,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        # fields = ['id', 'product_name', 'brand', 'model', 'description', 'price', 'date', 'memory', 'stars', 'activate']
         fields = '__all__'
     def to_representation(self, instance):
         representation = super().to_representation(instance)
